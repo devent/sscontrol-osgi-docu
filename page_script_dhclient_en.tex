@@ -1,0 +1,10 @@
+\section{Dhclient}
+
+
+
+\begin{lstlisting}[style=Groovy,caption={Dhclient script example.}]
+dhclient with {
+    requests "!domain-name-servers"
+    prepend "domain-name-servers", "127.0.0.1"
+}
+\end{lstlisting}

@@ -1,0 +1,125 @@
+%%%%
+% styles for gsclock-2-docu
+%%%%
+
+\usepackage[parfill]{parskip}
+\usepackage[margin=10pt,font=footnotesize,labelfont=bf,labelsep=endash]{caption}
+
+% Title
+\setkomafont{title}{\Huge\sffamily\bfseries\selectfont}
+\setkomafont{subtitle}{\Large}
+\setkomafont{date}{\itshape}
+
+%%%%%%%%%%%%%%%%%%%%%%
+%% chapter format
+\usepackage[Glenn]{fncychap}
+%% section format
+\usepackage{titlesec}
+
+\titleformat{\section}[block]
+{\filcenter\large
+\addtolength{\titlewidth}{2pc}%
+\titleline*[c]{\titlerule*[.6pc]{\tiny\textbullet}}%
+\addvspace{6pt}%
+\Large\bfseries}
+{\thesection}{1em}{}
+
+\titleformat{\subsection}[hang]
+{\normalfont\bfseries}
+{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+{\normalfont\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+\titleformat{\paragraph}[runin]
+{\normalsize\bfseries}
+{\theparagraph}
+{1em}
+{}
+%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%
+% for \pagestyle{scrheadings}
+\usepackage{scrpage2}
+\usepackage{lastpage}
+% the heading logo
+\newcommand{\TheHeadingLogo}{\includegraphics[height=2em]{\TheLogo}}
+% the character to be used to seperate the actual page and the total page number
+\newcommand{\pagenumsep}{/}
+%
+\pagestyle{scrheadings}
+\clearscrheadfoot
+\automark[section]{subsection}
+\cohead[]{\AppName} 
+\cehead[]{\AppName} 
+\ihead[]{\TheHeadingLogo} 
+\rohead[]{\rightmark}
+\lehead[]{\leftmark}
+\ofoot{\pagemark~\pagenumsep~\pageref{LastPage}}
+\setheadsepline[1.0\textwidth]{1pt}
+%%%%%%%%%%%%%%%%%%%%%%
+
+\newenvironment{Figure}
+  {\par\medskip\noindent\minipage{\linewidth}}
+  {\endminipage\par\medskip}
+
+% multi-columns
+\usepackage{multicol}
+\newcommand{\columnsepsize}{3em}
+\setlength\columnsep{\columnsepsize}
+\setlength\linewidth{0pt}
+\setlength\columnseprule{0pt}
+
+% vertical space
+\setlength{\parskip}{0.2em}
+
+% caption style
+\usepackage[format=plain,labelformat=parens,labelsep=quad]{caption}
+
+%%%%
+% hyphenation for code
+\DeclareTextFontCommand{\hytexttt}{\ttfamily\hyphenchar\font=45\relax}
+%
+\newcommand{\initmarginpar}[1]{\leavevmode\marginpar{\flushright{#1}}\ignorespaces}
+\newcommand{\AutoLabel}[2][empty]{\ifthenelse{\equal{#1}{empty}}{\label{#2}}{\label{#1}}}
+\newcommand{\AutoRef}[2][empty]{\ifthenelse{\equal{#1}{empty}}{\ref{#2}}{\ref{#1}}}
+\newcommand{\AutoIdx}[2][empty]{\ifthenelse{\equal{#1}{empty}}{\index{#2}}{\index{#1}}}
+% Different formats
+% Statement
+\definecolor{StatementColor}{named}{MediumBlue}
+\newcommand{\TheStatement}[2][empty]{\AutoLabel[#1]{#2}\initmarginpar{\textcolor{StatementColor}{\ttfamily\bfseries#2}}}
+\WithSuffix\newcommand\TheStatement*[2][empty]{\AutoIdx[#1]{#2}{\ttfamily\bfseries#2}}
+\newcommand{\Statement}[1]{{\ttfamily\bfseries#1}}
+\WithSuffix\newcommand\Statement*[2][empty]{\Statement{#2} (\AutoRef[#1]{#2})}
+% Properties
+\definecolor{PropertyColor}{named}{DarkBlue}
+\newcommand{\TheProperty}[2][empty]{\AutoLabel[#1]{#2}\initmarginpar{\textcolor{PropertyColor}{\ttfamily\bfseries#2}}}
+\WithSuffix\newcommand\TheProperty*[2][empty]{\AutoIdx[#1]{#2}{\ttfamily\bfseries#2}}
+\newcommand{\Property}[1]{{\ttfamily\bfseries#1}}
+\WithSuffix\newcommand\Property*[2][empty]{\Property{#2} (\AutoRef[#1]{#2})}
+
+% Distribution Logo
+\newcommand*{\vcenteredinclude}[1]{\begingroup
+\setbox0=\hbox{#1}%
+\parbox{\wd0}{\box0}\endgroup}
+\newcommand{\TheDistribution}[1]{\vcenteredinclude{\includegraphics[width=12pt]{#1}}}
+% Distributions
+\newcommand*{\TheUbuntuMaverickLTSDate}{Ubuntu Maverick 10.04 LTS \printdayoff{2015/04}}
+\newcommand*{\TheUbuntuPreciseLTSDate}{Ubuntu Precise 12.04 LTS \printdayoff{2017/04}}
+\newcommand*{\TheUbuntuTrustyLTSDate}{Ubuntu Trusty 14.04 LTS \printdayoff{2019/04}}
+
+% Types
+\newcommand{\Type}[1]{\textit{#1}\xspace}
+\newcommand{\TypeString}{\textit{string}\xspace}
+\newcommand{\TypeList}{\textit{list}\xspace}
+\newcommand{\TypeTrue}{\textit{true}\xspace}
+\newcommand{\TypeFalse}{\textit{false}\xspace}
+%%%%
+% variable typewriter font
+\newcommand\textvtt[1]{{\normalfont\fontfamily{cmvtt}\selectfont #1}\xspace}
+% code
+\newcommand{\code}[1]{\textvtt{\bfseries #1}}
+\newcommand{\qcode}[1]{\textvtt{\bfseries ``#1''}}
+% arguments
+\definecolor{ArgsColor}{named}{Green}
+\newcommand{\Arg}[1]{\textit{\textcolor{ArgsColor}{#1}}}

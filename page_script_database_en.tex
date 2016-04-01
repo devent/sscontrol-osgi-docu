@@ -1,0 +1,138 @@
+\section{Database Script}
+
+The database script is used to configure the database server, to specify
+the available databases on the server and the users that have access to those
+databases.
+
+\subsection[Database Statements]{Statements}
+
+The database statements must start with \qcode{database.with \{ ... \}} and
+contains the database statements inside the curly braces.
+The statements take either a list of arguments or a map that contains the arguments
+as \code{name:=value} pairs.
+
+\subsubsection{debug}
+
+\TheStatement[database:debug]{debug}
+\TheStatement*[database!debug]{debug \Arg{name}, [level: \Arg{level}] [file: \Arg{file}] [\dots]}
+
+Sets the debug logging \Arg{level} and logging \Arg{file} for the specified 
+logger \Arg{name}. The \Arg{name} identifies the logger of the server and 
+the \Arg{level} can be any positive number, zero is normally interpreted as no logging.
+
+\begin{lstlisting}[style=Groovy]
+database.with {
+    debug "error", level: 1
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=Groovy]
+debugLogs = []
+debugLogs << [name: "error", level: 1]
+debugLogs << [name: "slow-queries", level: 1]
+debugLogs << [name: "general", level: 1, file: "/var/log/mysql/mysql.log"]
+debugLogs.each { database.debug it }
+\end{lstlisting}
+
+\subsubsection{bind}
+
+\TheStatement[database:bind]{bind}
+\TheStatement*[database!bind]{bind local|all|\Arg{address} [, port: \Arg{port}]}
+
+Sets the binding \Arg{address} and the binding \Arg{port}. Set to \qcode{local}
+for the local host address \code{127.0.0.1} or to \qcode{all} to listen to all
+hosts.
+
+\begin{lstlisting}[style=Groovy]
+database.with {
+    bind "192.168.0.1", port: 3306
+}
+\end{lstlisting}
+
+\subsubsection{admin}
+
+\TheStatement[database:admin]{admin}
+\TheStatement*[database!admin]{admin \Arg{name}, password: \Arg{password}}
+
+Sets the administrator \Arg{name} and \Arg{password} for the database server. If no password for
+the administrator account was yet set, this administrator name and password is set. The administrator 
+user is used to to create users, create databases and set permissions.
+
+\begin{lstlisting}[style=Groovy]
+database.with {
+    admin 'root', password: 'mysqladminpassword'
+}
+\end{lstlisting}
+
+\subsubsection{db}
+
+\TheStatement[database:db]{db}
+\TheStatement*[database!db]{db \Arg{name} [, charset: \Arg{name}] [, collate: \Arg{name}] [, \{ script \}]}
+
+Creates a new database with the specified database \Arg{name}, 
+and, optionally, the character set and collate. If the database was already on 
+the server, the character set and collate should be updated to the specified 
+character set and collate. The database server needs to support 
+the specified character set and collate.
+
+\begin{lstlisting}[style=Groovy]
+database.with {
+    db "postfixdb", charset: "latin1", collate: "latin1_swedish_ci"
+}
+\end{lstlisting}
+
+\subsubsection{script}
+
+\TheStatement[database:script]{script}
+\TheStatement*[database!script]{script importing: \Arg{resource}}
+
+Imports the script \Arg{resource}. The resource can be a file, URL or URI. 
+A string will be interpreted according to the format, if no scheme is used 
+the string is assumed to be a local file.
+
+\begin{lstlisting}[style=Groovy]
+database.with {
+    db "postfixdb" with {
+        script importing: "postfixtables.sql"
+    }
+}
+\end{lstlisting}
+
+\subsection[Database Example]{Example}
+
+It is recommended to put the script variables in a standalone file, for example
+in ``Globals.groovy'' and load the script variables using 
+the ``evaluate'' statement.
+
+\vspace{1em}
+\begin{lstlisting}[style=Groovy,caption={Predefined database variables.}]
+/**
+* Globals.groovy
+*/
+def databasemap = [
+    server: '127.0.0.1',
+    port: 3306,
+    password: 'somepass',
+    phpmyadmin: [
+        user: 'phpmyadmin',
+        password: 'somepass',
+        db: 'phpmyadmindb',
+    ],
+]
+\end{lstlisting}
+
+\begin{lstlisting}[style=Groovy,caption={Database script example.}]
+/**
+* Database.groovy
+*/
+evaluate "./Globals.groovy" as File
+
+database.with {
+    bind databasemap.server, port: databasemap.port
+    admin user: 'root', password: databasemap.password
+    db name: databasemap.phpmyadmin.db
+    user databasemap.phpmyadmin.user, password: databasemap.phpmyadmin.password with {
+        access database: databasemap.phpmyadmin.db
+    }
+}
+\end{lstlisting}

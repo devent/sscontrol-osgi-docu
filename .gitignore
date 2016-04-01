@@ -1,0 +1,13 @@
+*.aux
+*.log
+*.out
+temp*
+.project
+.texlipse
+*~
+*.backup
+*.toc
+*.kilepr
+.directory
+*.bib
+software-docu-template_en.pdf
